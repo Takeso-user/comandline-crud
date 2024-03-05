@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-posts-labels
+      author: takeso
+      changes:
+        - sqlFile:
+            path: ../data/insert_posts_labels_many_to_many.sql
+            relativeToChangelogFile: true

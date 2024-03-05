@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-poststatus
+      author: takeso
+      changes:
+        - sqlFile:
+            path: ../data/insert_poststatus.sql
+            relativeToChangelogFile: true

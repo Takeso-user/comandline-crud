@@ -16,15 +16,16 @@ import pl.malcew.publicmentoringmalcew.view.Bootstrap;
 @SpringBootApplication
 public class PublicMentoringMalcewApplication {
 
-    private final WriterRepo writerRepo;
-    private final LabelRepo labelRepo;
-    private final PostRepo postRepo;
+    private final WriterService writerService;
+    private final LabelService labelService;
+    private final PostService postService;
 
-    public PublicMentoringMalcewApplication(WriterRepo writerRepo, LabelRepo labelRepo, PostRepo postRepo) {
-        this.writerRepo = writerRepo;
-        this.labelRepo = labelRepo;
-        this.postRepo = postRepo;
+    public PublicMentoringMalcewApplication(WriterService writerService, LabelService labelService, PostService postService) {
+        this.writerService = writerService;
+        this.labelService = labelService;
+        this.postService = postService;
     }
+
 
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(PublicMentoringMalcewApplication.class);
@@ -39,9 +40,9 @@ public class PublicMentoringMalcewApplication {
             // This code will run when the application starts
             System.out.println("!!!Hello, Writer App!!!");
 
-            WriterService writerService = new WriterService(writerRepo);
-            LabelService labelService = new LabelService(labelRepo);
-            PostService postService = new PostService(postRepo);
+//            WriterService writerService = new WriterService(writerRepo);
+//            LabelService labelService = new LabelService(labelRepo);
+//            PostService postService = new PostService(postRepo);
 
             Bootstrap bootstrap = new Bootstrap(writerService, labelService, postService);
             bootstrap.run();

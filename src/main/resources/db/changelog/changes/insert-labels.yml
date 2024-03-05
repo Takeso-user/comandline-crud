@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-labels
+      author: takeso
+      changes:
+        - sqlFile:
+            path: ../data/insert_labels.sql
+            relativeToChangelogFile: true

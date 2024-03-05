@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: create-tables
+      id: create-db-structure
       author: takeso
       changes:
         - createTable:
@@ -39,6 +39,21 @@ databaseChangeLog:
                   constraints:
                     nullable: false
         - createTable:
+            tableName: poststatus
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+        - createTable:
             tableName: post
             columns:
               - column:
@@ -65,8 +80,8 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: status
-                  type: int
-                  defaultValue: ACTIVE
+                  type: bigint
+                  defaultValue: 1
                   constraints:
                     nullable: false
                     foreignKeyName: fk_post_status
@@ -95,53 +110,3 @@ databaseChangeLog:
                     nullable: false
                     foreignKeyName: fk_postlabel_label
                     references: label(id)
-        - createTable:
-            tableName: poststatus
-            columns:
-              - column:
-                  name: id
-                  type: bigint
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: status
-                  type: varchar(255)
-                  constraints:
-                    nullable: false
-  - changeSet:
-      id: insert-writers
-      author: takeso
-      changes:
-        - sqlFile:
-            path: db/data/insert_writers.sql
-            relativeToChangelogFile: true
-  - changeSet:
-      id: insert-labels
-      author: takeso
-      changes:
-        - sqlFile:
-            path: db/data/insert_labels.sql
-            relativeToChangelogFile: true
-  - changeSet:
-      id: insert-posts
-      author: takeso
-      changes:
-        - sqlFile:
-            path: db/data/insert_posts.sql
-            relativeToChangelogFile: true
-  - changeSet:
-      id: insert-posts-labels
-      author: takeso
-      changes:
-        - sqlFile:
-            path: db/data/insert_posts_labels_many_to_many.sql
-            relativeToChangelogFile: true
-  - changeSet:
-        id: insert-poststatus
-        author: takeso
-        changes:
-          - sqlFile:
-              path: db/data/insert_poststatus.sql
-              relativeToChangelogFile: true

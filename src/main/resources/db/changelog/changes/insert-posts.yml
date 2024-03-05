@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-posts
+      author: takeso
+      changes:
+        - sqlFile:
+            path: ../data/insert_posts.sql
+            relativeToChangelogFile: true

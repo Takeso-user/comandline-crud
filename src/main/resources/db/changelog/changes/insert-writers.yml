@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-writers-1
+      author: takeso
+      changes:
+        - sqlFile:
+            path: ../data/insert_writers.sql
+            relativeToChangelogFile: true
