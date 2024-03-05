@@ -7,4 +7,10 @@ public record Writer (
     String firstName,
     String lastName,
     List<Post> posts
-){}
+){
+    public Writer(String firstName, String lastName) {
+        this(null, firstName, lastName, null);
+    }
+
+
+}

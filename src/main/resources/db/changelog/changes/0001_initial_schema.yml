@@ -1,49 +1,147 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
-
-    <changeSet id="1" author="yourname">
-        <createTable tableName="label">
-            <column name="id" type="bigint" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="name" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <createTable tableName="post">
-            <column name="id" type="bigint" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="content" type="text">
-                <constraints nullable="false"/>
-            </column>
-            <column name="created" type="datetime">
-                <constraints nullable="false"/>
-            </column>
-            <column name="updated" type="datetime">
-                <constraints nullable="false"/>
-            </column>
-            <column name ="status" type="varchar(255)" defaultValue="ACTIVE">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <createTable tableName="writer">
-            <column name="id" type="bigint" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="firstName" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="lastName" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-
-</databaseChangeLog>
+databaseChangeLog:
+  - changeSet:
+      id: create-tables
+      author: takeso
+      changes:
+        - createTable:
+            tableName: writer
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: firstName
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: lastName
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: label
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: post
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: content
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: int
+                  defaultValue: ACTIVE
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_post_status
+                    references: poststatus(id)
+              - column:
+                  name: writer_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_post_writer
+                    references: writer(id)
+        - createTable:
+            tableName: post_labels
+            columns:
+              - column:
+                  name: post_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_postlabel_post
+                    references: post(id)
+              - column:
+                  name: label_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_postlabel_label
+                    references: label(id)
+        - createTable:
+            tableName: poststatus
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: insert-writers
+      author: takeso
+      changes:
+        - sqlFile:
+            path: db/data/insert_writers.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: insert-labels
+      author: takeso
+      changes:
+        - sqlFile:
+            path: db/data/insert_labels.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: insert-posts
+      author: takeso
+      changes:
+        - sqlFile:
+            path: db/data/insert_posts.sql
+            relativeToChangelogFile: true
+  - changeSet:
+      id: insert-posts-labels
+      author: takeso
+      changes:
+        - sqlFile:
+            path: db/data/insert_posts_labels_many_to_many.sql
+            relativeToChangelogFile: true
+  - changeSet:
+        id: insert-poststatus
+        author: takeso
+        changes:
+          - sqlFile:
+              path: db/data/insert_poststatus.sql
+              relativeToChangelogFile: true

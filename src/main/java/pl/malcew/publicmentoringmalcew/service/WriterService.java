@@ -1,16 +1,18 @@
-package pl.malcew.publicmentoringmalcew.service.WriterService;
+package pl.malcew.publicmentoringmalcew.service;
 
+import org.springframework.stereotype.Component;
 import pl.malcew.publicmentoringmalcew.model.Writer;
 import pl.malcew.publicmentoringmalcew.repo.WriterRepo;
 
 import java.util.List;
-
+@Component
 public class WriterService {
     private final WriterRepo writerRepo;
 
     public WriterService(WriterRepo writerRepo) {
         this.writerRepo = writerRepo;
     }
+
 
     public void createWriter(Writer writer) {
         writerRepo.create(writer);

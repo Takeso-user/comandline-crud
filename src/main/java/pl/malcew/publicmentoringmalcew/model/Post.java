@@ -8,5 +8,7 @@ public record Post (
     String content,
     LocalDateTime created,
     LocalDateTime updated,
-    List<Label> lables
+    List<Label> labels,
+    PostStatus status,
+    Writer writer
 ){}

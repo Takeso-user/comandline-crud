@@ -1,2 +1,6 @@
-package pl.malcew.publicmentoringmalcew.repo;public interface PostRepo {
+package pl.malcew.publicmentoringmalcew.repo;
+
+import pl.malcew.publicmentoringmalcew.model.Post;
+
+public interface PostRepo extends GenericRepository<Post, Long>{
 }
