@@ -37,6 +37,7 @@ public class PostView {
         LocalDateTime created = LocalDateTime.now();
         List<Label> labels = new ArrayList<>();
         System.out.println("Enter content: ");
+        scanner.nextLine();
         String content = scanner.nextLine();
 
         while (true) {
@@ -53,22 +54,24 @@ public class PostView {
         return new Post(null, content, created, created, labels, PostStatus.ACTIVE, writer);
     }
 
-    public void displayPosts(List<Post> posts) {
-        String leftAlignFormat = "| %-15s | %-15s | %-15s | %-15s | %-15s | %-15s | %-15s |%n";
-        String labelFormat = "| %-15s | %-15s |%n";
+public void displayPosts(List<Post> posts) {
+    String leftAlignFormat = "| %-15s | %-15s | %-15s | %-15s | %-15s | %-15s | %-15s |%n";
 
-        System.out.format("+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+%n");
-        System.out.format("| ID              | Content         | Created         | Updated         | Labels          | Status          | Writer          |%n");
-        System.out.format("+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+%n");
-        for (Post post : posts) {
-            List<String> labels = post.labels().stream().map(Label::name).toList();
-            System.out.format(leftAlignFormat, post.id(), post.content(), post.created(), post.updated(), labels.isEmpty() ? "" : labels.get(0), post.status(), post.writer());
-            for (int i = 1; i < labels.size(); i++) {
-                System.out.format(labelFormat, "", labels.get(i));
+    System.out.format("+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+%n");
+    System.out.format("| ID              | Content         | Created         | Updated         | Label           | Status          | Writer          |%n");
+    System.out.format("+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+%n");
+    for (Post post : posts) {
+        List<String> labels = post.labels().stream().map(Label::name).toList();
+        if (labels.isEmpty()) {
+            System.out.format(leftAlignFormat, post.id(), post.content(), post.created(), post.updated(), "", post.status(), post.writer());
+        } else {
+            for (String label : labels) {
+                System.out.format(leftAlignFormat, post.id(), post.content(), post.created(), post.updated(), label, post.status(), post.writer());
             }
         }
-        System.out.format("+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+%n");
     }
+    System.out.format("+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+%n");
+}
 
     public Long providePostId() {
         System.out.print("Enter Post ID: ");

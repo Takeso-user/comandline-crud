@@ -49,8 +49,9 @@ public class WriteController {
     }
 
     private void createWriter() {
-        String firstName = writerView.readWriter().firstName();
-        String lastName = writerView.readWriter().lastName();
+        Writer createWriter = writerView.readWriter();
+        String firstName = createWriter.firstName();
+        String lastName = createWriter.lastName();
         Writer wr = new Writer(firstName, lastName);
         writerService.createWriter(wr);
         System.out.println("Writer created successfully.\n" + "Writer: " + wr);
@@ -75,13 +76,10 @@ public class WriteController {
         }
         writerService.deleteWriter(writerToDelete);
         System.out.println("Writer deleted successfully.");
-        // Similar to createWriter
     }
 
     private void viewAllWriters() {
         List<Writer> writers = writerService.viewAllWriters();
         writerView.displayWriters(writers);
-        // Call writerService to get all writers
-        // Call writerView to display all writers
     }
 }

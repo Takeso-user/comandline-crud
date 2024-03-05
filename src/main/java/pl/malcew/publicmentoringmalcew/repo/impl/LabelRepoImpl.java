@@ -4,25 +4,31 @@ import org.springframework.stereotype.Component;
 import pl.malcew.publicmentoringmalcew.model.Label;
 import pl.malcew.publicmentoringmalcew.repo.LabelRepo;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 @Component
 public class LabelRepoImpl extends RepoImplConnectionAbstractClass implements LabelRepo {
 
 
-    @Override
-    public void create(Label entity) {
-        try (Connection connection = getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO label (name) VALUES (?)");
-            preparedStatement.setString(1, entity.name());
-            preparedStatement.executeUpdate();
-        } catch (Exception e) {
-            System.err.printf("Error creating label: %s", e);
-        }
-    }
+public Long create(Label entity) {
+    try (Connection connection = getConnection()) {
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "INSERT IGNORE INTO label (name) VALUES (?)",
+                Statement.RETURN_GENERATED_KEYS);
+        preparedStatement.setString(1, entity.name());
+        preparedStatement.executeUpdate();
 
+        ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+        if (generatedKeys.next()) {
+            return generatedKeys.getLong(1);
+        } else {
+            throw new SQLException("Creating label failed, no ID obtained.");
+        }
+    } catch (Exception e) {
+        throw new RuntimeException("Error creating label: ", e);
+    }
+}
     @Override
     public Label read(Long id) {
         try (Connection connection = getConnection()) {

@@ -46,16 +46,15 @@ public class WriterView {
         return new Writer(writer.id(), firstName, lastName, writer.posts());
     }
 
-    public void displayWriters(List<Writer> writers) {
-        String leftAlignFormat = "| %-15s | %-15s |%n";
+public void displayWriters(List<Writer> writers) {
+    String leftAlignFormat = "| %-15s | %-15s | %-15s |%n";
 
-        System.out.format("+-----------------+-----------------+%n");
-        System.out.format("| First Name      | Last Name       |%n");
-        System.out.format("+-----------------+-----------------+%n");
-        for (Writer writer : writers) {
-            System.out.format(leftAlignFormat, writer.firstName(), writer.lastName());
-        }
-        System.out.format("+-----------------+-----------------+%n");
-
+    System.out.format("+-----------------+-----------------+-----------------+%n");
+    System.out.format("| ID              | First Name      | Last Name       |%n");
+    System.out.format("+-----------------+-----------------+-----------------+%n");
+    for (Writer writer : writers) {
+        System.out.format(leftAlignFormat, writer.id(), writer.firstName(), writer.lastName());
     }
+    System.out.format("+-----------------+-----------------+-----------------+%n");
+}
 }

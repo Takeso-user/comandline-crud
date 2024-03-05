@@ -8,6 +8,8 @@ import pl.malcew.publicmentoringmalcew.service.WriterService;
 import pl.malcew.publicmentoringmalcew.view.PostView;
 import pl.malcew.publicmentoringmalcew.view.WriterView;
 
+import java.util.List;
+
 @Component
 public class PostController {
     private final PostView postView;
@@ -51,6 +53,8 @@ public class PostController {
     }
 
     private void viewAllPosts() {
+        List<Post> posts = postService.viewAllPosts();
+        postView.displayPosts(posts);
     }
 
     private void deletePost() {

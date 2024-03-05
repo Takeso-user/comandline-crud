@@ -29,7 +29,6 @@ public class PublicMentoringMalcewApplication {
 
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(PublicMentoringMalcewApplication.class);
-        // Modify the application configuration
         app.setBannerMode(Banner.Mode.OFF);
         app.run(args);
     }
@@ -37,12 +36,7 @@ public class PublicMentoringMalcewApplication {
     @Bean
     public CommandLineRunner commandLineRunner() {
         return args -> {
-            // This code will run when the application starts
             System.out.println("!!!Hello, Writer App!!!");
-
-//            WriterService writerService = new WriterService(writerRepo);
-//            LabelService labelService = new LabelService(labelRepo);
-//            PostService postService = new PostService(postRepo);
 
             Bootstrap bootstrap = new Bootstrap(writerService, labelService, postService);
             bootstrap.run();

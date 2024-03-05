@@ -14,7 +14,7 @@ public class WriterRepositoryImpl extends RepoImplConnectionAbstractClass implem
 
 
     @Override
-    public void create(Writer entity) {
+    public Long create(Writer entity) {
         try (Connection connection = getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO writer (firstName, lastName) VALUES (?, ?)");
             preparedStatement.setString(1, entity.firstName());
@@ -24,6 +24,7 @@ public class WriterRepositoryImpl extends RepoImplConnectionAbstractClass implem
             System.err.printf("Error creating writer: %s", e);
 
         }
+        return null;
     }
 
     @Override

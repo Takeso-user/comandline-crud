@@ -1,6 +1,7 @@
 package pl.malcew.publicmentoringmalcew.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public record Post (
@@ -11,4 +12,10 @@ public record Post (
     List<Label> labels,
     PostStatus status,
     Writer writer
-){}
+) {
+    public Post {
+        if (labels == null) {
+            labels = new ArrayList<>();
+        }
+    }
+}
