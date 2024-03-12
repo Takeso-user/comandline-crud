@@ -1,5 +1,7 @@
 package pl.malcew.publicmentoringmalcew.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import pl.malcew.publicmentoringmalcew.model.Writer;
 import pl.malcew.publicmentoringmalcew.service.WriterService;
@@ -12,7 +14,7 @@ public class WriteController {
 
     private final WriterView writerView;
     private final WriterService writerService;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(WriteController.class);
 
     public WriteController(WriterView writerView, WriterService writerService) {
         this.writerView = writerView;
@@ -45,7 +47,9 @@ public class WriteController {
     }
 
     private Long getWriterID() {
-        return writerView.provideWriterId();
+        var id = writerView.provideWriterId();
+        LOGGER.info("Provide writer ID: {}", id);
+        return id;
     }
 
     private void createWriter() {
@@ -53,32 +57,32 @@ public class WriteController {
         String firstName = createWriter.firstName();
         String lastName = createWriter.lastName();
         Writer wr = new Writer(firstName, lastName);
-        writerService.createWriter(wr);
-        System.out.println("Writer created successfully.\n" + "Writer: " + wr);
+        var id = writerService.createWriter(wr);
+        LOGGER.info("Writer {} with id {} created successfully", wr, id);
     }
 
     private void updateWriter() {
         Writer existingWriter = writerService.readWriter(getWriterID());
         if (existingWriter == null) {
-            System.out.println("No writer found with the provided ID.");
+            LOGGER.error("No writer found with the provided ID.");
             return;
         }
         Writer updatedWriter = writerView.updateWriter(existingWriter);
-        writerService.updateWriter(updatedWriter);
-        System.out.println("Writer updated successfully.");
+        var writer = writerService.updateWriter(updatedWriter);
+        LOGGER.info("Writer {} updated successfully", writer);
     }
 
     private void deleteWriter() {
         Writer writerToDelete = writerService.readWriter(getWriterID());
         if (writerToDelete == null) {
-            System.out.println("No writer found with the provided ID.");
+            LOGGER.error("No writer found with the provided ID.");
             return;
         }
-        writerService.deleteWriter(writerToDelete);
-        System.out.println("Writer deleted successfully.");
+        LOGGER.info("Writer with id={} has been deleted successfully", writerService.deleteWriter(writerToDelete));
     }
 
     private void viewAllWriters() {
+        LOGGER.info("Viewing all writers");
         List<Writer> writers = writerService.viewAllWriters();
         writerView.displayWriters(writers);
     }

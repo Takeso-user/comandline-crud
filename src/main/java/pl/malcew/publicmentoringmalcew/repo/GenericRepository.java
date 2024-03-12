@@ -6,7 +6,7 @@ public interface GenericRepository<T, T1> {
     Long create(T entity);
     T read(T1 id);
     List<T> viewAll();
-    void update(T entity);
-    void delete(T entity);
+    T update(T entity);
+    Long delete(T entity);
 
 }

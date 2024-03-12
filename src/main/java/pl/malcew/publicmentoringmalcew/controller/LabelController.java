@@ -1,5 +1,7 @@
 package pl.malcew.publicmentoringmalcew.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import pl.malcew.publicmentoringmalcew.model.Label;
 import pl.malcew.publicmentoringmalcew.service.LabelService;
@@ -11,12 +13,12 @@ import java.util.List;
 public class LabelController {
     private final LabelView labelView;
     private final LabelService labelService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(LabelController.class);
 
     public LabelController(LabelView labelView, LabelService labelService) {
         this.labelView = labelView;
         this.labelService = labelService;
     }
-
 
 
     public void handleMenu() {
@@ -27,7 +29,6 @@ public class LabelController {
                 createLabel();
                 break;
             case 2:
-                Long id= getLabelId();
                 readLabel();
                 break;
             case 3:
@@ -47,24 +48,28 @@ public class LabelController {
     }
 
     private void viewAllLabels() {
+        LOGGER.info("Viewing all labels");
         labelView.displayLabels(labelService.viewAllLabels());
     }
 
     private void deleteLabel() {
         Long id = labelView.provideLabelId();
-        labelService.deleteLabel(id);
+        LOGGER.info("Deleting label with id: " + labelService.deleteLabel(id));
     }
 
     private void updateLabel() {
         Long id = labelView.provideLabelId();
         String name = labelView.provideLabelName();
         Label label = new Label(id, name);
-        labelService.updateLabel(label);
+        LOGGER.info("Updating label with id: " + id);
+        LOGGER.info("New label : " + labelService.updateLabel(label));
     }
 
     private void readLabel() {
         Long id = labelView.provideLabelId();
         Label label = labelService.readLabel(id);
+        LOGGER.info("Reading label with id: " + id);
+        LOGGER.info("Label : " + label);
         if(label == null) {
             System.out.println("Label not found");
             return;
@@ -72,12 +77,8 @@ public class LabelController {
         labelView.displayLabels(List.of(label));
     }
 
-    private Long getLabelId() {
-        return labelView.provideLabelId();
-    }
-
     private void createLabel() {
         String labelName = labelView.provideLabelName();
-        labelService.createLabel(labelName);
+        LOGGER.info("Creating label with name: " + labelName + " and id: " + labelService.createLabel(labelName));
     }
 }

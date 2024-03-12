@@ -1,5 +1,7 @@
 package pl.malcew.publicmentoringmalcew.repo.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import pl.malcew.publicmentoringmalcew.model.Label;
 import pl.malcew.publicmentoringmalcew.model.Post;
@@ -16,9 +18,11 @@ import java.util.stream.Collectors;
 @Repository
 public class PostRepoImpl extends RepoImplConnectionAbstractClass implements PostRepo {
 
+    private final Logger LOGGER = LoggerFactory.getLogger(PostRepoImpl.class);
 
     @Override
     public Long create(Post entity) {
+        LOGGER.info("Creating post: {}", entity);
         try (Connection connection = getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "INSERT INTO post (content, created, updated, status, writer_id) VALUES (?, ?, ?, ?, ?)",
@@ -38,12 +42,14 @@ public class PostRepoImpl extends RepoImplConnectionAbstractClass implements Pos
                 throw new SQLException("Creating post failed, no ID obtained.");
             }
         } catch (SQLException ex) {
+            LOGGER.error("Error creating post: ", ex);
             throw new RuntimeException(ex);
         }
     }
 
     @Override
     public Post read(Long id) {
+        LOGGER.info("Reading post with id: {}", id);
         try (Connection connection = getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT p.id, p.content, p.created, p.updated, s.status, w.firstName, w.lastName, GROUP_CONCAT(l.name) as labels " +
@@ -83,6 +89,7 @@ public class PostRepoImpl extends RepoImplConnectionAbstractClass implements Pos
                 );
             }
         } catch (SQLException ex) {
+            LOGGER.error("Error reading post: ", ex);
             throw new RuntimeException(ex);
         }
         return null;
@@ -90,6 +97,7 @@ public class PostRepoImpl extends RepoImplConnectionAbstractClass implements Pos
 
     @Override
     public List<Post> viewAll() {
+        LOGGER.info("Viewing all posts");
         List<Post> entities = new ArrayList<>();
         try (Connection connection = getConnection()) {
             var statement = connection.createStatement();
@@ -102,7 +110,6 @@ public class PostRepoImpl extends RepoImplConnectionAbstractClass implements Pos
                             "LEFT JOIN writer w ON p.writer_id = w.id " +
                             "GROUP BY p.id"
             );
-
 
             while (resultSet.next()) {
                 List<Label> labels;
@@ -130,12 +137,15 @@ public class PostRepoImpl extends RepoImplConnectionAbstractClass implements Pos
                 ));
             }
         } catch (SQLException ex) {
+            LOGGER.error("Error viewing posts: ", ex);
             throw new RuntimeException(ex);
         }
         return entities;
     }
+
     @Override
-    public void update(Post entity) {
+    public Post update(Post entity) {
+        LOGGER.info("Updating post: {}", entity);
         try (Connection connection = getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE post SET content = ?, created = ?, updated = ?, status = ?, writer_id = ? WHERE id = ?");
@@ -147,31 +157,39 @@ public class PostRepoImpl extends RepoImplConnectionAbstractClass implements Pos
             preparedStatement.setLong(6, entity.id());
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
+            LOGGER.error("Error updating post: ", ex);
             throw new RuntimeException(ex);
         }
-
+        return entity;
     }
 
     @Override
-    public void delete(Post entity) {
+    public Long delete(Post entity) {
+        LOGGER.info("Deleting post: {}", entity);
         try (Connection connection = getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM post WHERE id = ?");
             preparedStatement.setLong(1, entity.id());
             preparedStatement.executeUpdate();
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
+        } catch (SQLIntegrityConstraintViolationException e) {
+            LOGGER.error("Cannot delete post due to existing references: ", e);
 
+        } catch (Exception e) {
+            LOGGER.error("Error deleting post: ", e);
+            return 0L;
+        }
+        return entity.id();
+    }
 
     @Override
     public void addLabelToPost(Long postId, Long labelId) {
+        LOGGER.info("Adding label with id {} to post with id {}", labelId, postId);
         try (Connection connection = getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO post_labels (post_id, label_id) VALUES (?, ?)");
             preparedStatement.setLong(1, postId);
             preparedStatement.setLong(2, labelId);
             preparedStatement.executeUpdate();
         } catch (SQLException ex) {
+            LOGGER.error("Error adding label to post: ", ex);
             throw new RuntimeException(ex);
         }
     }
