@@ -47,17 +47,17 @@ public class LabelController {
         }
     }
 
-    private void viewAllLabels() {
+    void viewAllLabels() {
         LOGGER.info("Viewing all labels");
         labelView.displayLabels(labelService.viewAllLabels());
     }
 
-    private void deleteLabel() {
+    void deleteLabel() {
         Long id = labelView.provideLabelId();
         LOGGER.info("Deleting label with id: " + labelService.deleteLabel(id));
     }
 
-    private void updateLabel() {
+    void updateLabel() {
         Long id = labelView.provideLabelId();
         String name = labelView.provideLabelName();
         Label label = new Label(id, name);
@@ -65,7 +65,7 @@ public class LabelController {
         LOGGER.info("New label : " + labelService.updateLabel(label));
     }
 
-    private void readLabel() {
+    void readLabel() {
         Long id = labelView.provideLabelId();
         Label label = labelService.readLabel(id);
         LOGGER.info("Reading label with id: " + id);
@@ -77,7 +77,7 @@ public class LabelController {
         labelView.displayLabels(List.of(label));
     }
 
-    private void createLabel() {
+    void createLabel() {
         String labelName = labelView.provideLabelName();
         LOGGER.info("Creating label with name: " + labelName + " and id: " + labelService.createLabel(labelName));
     }

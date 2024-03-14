@@ -52,16 +52,16 @@ public class WriteController {
         return id;
     }
 
-    private void createWriter() {
+    void createWriter() {
         Writer createWriter = writerView.readWriter();
         String firstName = createWriter.firstName();
         String lastName = createWriter.lastName();
-        Writer wr = new Writer(firstName, lastName);
+        Writer wr = new Writer(null, firstName, lastName, null);
         var id = writerService.createWriter(wr);
         LOGGER.info("Writer {} with id {} created successfully", wr, id);
     }
 
-    private void updateWriter() {
+    void updateWriter() {
         Writer existingWriter = writerService.readWriter(getWriterID());
         if (existingWriter == null) {
             LOGGER.error("No writer found with the provided ID.");
@@ -72,7 +72,7 @@ public class WriteController {
         LOGGER.info("Writer {} updated successfully", writer);
     }
 
-    private void deleteWriter() {
+    void deleteWriter() {
         Writer writerToDelete = writerService.readWriter(getWriterID());
         if (writerToDelete == null) {
             LOGGER.error("No writer found with the provided ID.");
@@ -81,7 +81,7 @@ public class WriteController {
         LOGGER.info("Writer with id={} has been deleted successfully", writerService.deleteWriter(writerToDelete));
     }
 
-    private void viewAllWriters() {
+    void viewAllWriters() {
         LOGGER.info("Viewing all writers");
         List<Writer> writers = writerService.viewAllWriters();
         writerView.displayWriters(writers);

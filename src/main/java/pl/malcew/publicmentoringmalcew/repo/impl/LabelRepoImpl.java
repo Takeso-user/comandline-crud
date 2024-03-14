@@ -1,7 +1,9 @@
 package pl.malcew.publicmentoringmalcew.repo.impl;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import pl.malcew.publicmentoringmalcew.model.Label;
 import pl.malcew.publicmentoringmalcew.repo.LabelRepo;
 
@@ -9,10 +11,11 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 @Component
 public class LabelRepoImpl extends RepoImplConnectionAbstractClass implements LabelRepo {
 
-    private final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(LabelRepoImpl.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(LabelRepoImpl.class);
 
     public Long create(Label entity) {
         LOGGER.info("Creating label: {}", entity);
@@ -56,12 +59,14 @@ public class LabelRepoImpl extends RepoImplConnectionAbstractClass implements La
         LOGGER.info("Viewing all labels");
         List<Label> entities = new ArrayList<>();
         try (Connection connection = getConnection()) {
-            var statement = connection.createStatement();
-            var resultSet = statement.executeQuery("SELECT * FROM label");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM label");
+            ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                long id = resultSet.getInt("id");
-                String name = resultSet.getString("name");
+                Long id = resultSet.getLong(1);
+                LOGGER.info("!!Reading label with id: {}", id);
+                String name = resultSet.getString(2);
+                LOGGER.info("!!Reading label with name: {}", name);
                 entities.add(new Label(id, name));
             }
         } catch (Exception e) {

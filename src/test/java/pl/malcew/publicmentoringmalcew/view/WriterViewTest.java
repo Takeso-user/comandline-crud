@@ -29,14 +29,22 @@ class WriterViewTest {
     @Test
     void displayWriters() {
         WriterView writerView = new WriterView();
-        Writer writer1 = new Writer("John", "Doe");
-        Writer writer2 = new Writer("Jane", "Doe");
+        Writer writer1 = new Writer(null,
+                "Test1",
+                " Writer1",
+                null);
+        Writer writer2 = new Writer(null,
+                "Test2",
+                " Writer2",
+                null);
 
         writerView.displayWriters(Arrays.asList(writer1, writer2));
 
-        String expectedOutput1 = "| John            | Doe             |";
-        String expectedOutput2 = "| Jane            | Doe             |";
-
+        String expectedOutput1 = "| Test1            | Writer1             |";
+        String expectedOutput2 = "| Test2            | Writer2             |";
+        System.out.println("content: " + outContent.toString());
+        System.out.println("expected1: " + expectedOutput1);
+        System.out.println("expected2: " + expectedOutput2);
         assertTrue(outContent.toString().contains(expectedOutput1));
         assertTrue(outContent.toString().contains(expectedOutput2));
     }

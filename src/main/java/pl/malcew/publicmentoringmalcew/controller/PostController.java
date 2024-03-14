@@ -53,19 +53,19 @@ public class PostController {
         }
     }
 
-    private void viewAllPosts() {
+    void viewAllPosts() {
         List<Post> posts = postService.viewAllPosts();
         LOGGER.info("Viewing all posts");
         postView.displayPosts(posts);
     }
 
-    private void deletePost() {
+    void deletePost() {
         Long id = postView.providePostId();
         LOGGER.info("Post with id={} is deleted", postService.deletePost(id));
 
     }
 
-    private void updatePost() {
+    void updatePost() {
         Post post = postService.readPost(postView.providePostId());
         if(post == null) {
             LOGGER.error("Post not found");
@@ -76,13 +76,15 @@ public class PostController {
 
     }
 
-    private void readPost() {
+    void readPost() {
         Long id = postView.providePostId();
-        LOGGER.info("Reading post {}", postService.readPost(id));
+        Post post = postService.readPost(id);
+        postView.displayPosts(List.of(post));
+        LOGGER.info("Reading post {}", post);
     }
 
 
-    private void createPost() {
+    void createPost() {
         Writer writer = getWriter();
         Post post = postView.createPost(writer);
         LOGGER.info("Creating new post {}", postService.createPost(post));

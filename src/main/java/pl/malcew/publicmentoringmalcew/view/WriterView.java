@@ -33,7 +33,7 @@ public class WriterView {
         String firstName = scanner.next();
         System.out.print("Enter Writer Last Name: ");
         String lastName = scanner.next();
-        return new Writer(firstName, lastName);
+        return new Writer(null, firstName, lastName, null);
     }
 
     public Writer updateWriter(Writer writer) {

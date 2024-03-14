@@ -20,7 +20,7 @@ public class PostService {
         this.labelRepo = labelRepo;
     }
 
-    public Post createPost(Post post) {
+    public Long createPost(Post post) {
         LOGGER.info("Creating post: {}", post);
         Long postId = postRepo.create(post);
         post.labels().forEach(label -> {
@@ -28,7 +28,7 @@ public class PostService {
             postRepo.addLabelToPost(postId, labelId);
         });
         LOGGER.info("Post created with id: {}", postId);
-        return post;
+        return postId;
     }
 
     public Post readPost(Long id) {
