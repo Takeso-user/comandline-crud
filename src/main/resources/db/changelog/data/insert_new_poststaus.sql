@@ -1,0 +1,9 @@
+
+UPDATE poststatus
+SET status = CASE id
+    WHEN 1 THEN 'ACTIVE'
+    WHEN 2 THEN 'UNDER_REVIEW'
+    WHEN 3 THEN 'DELETED'
+    WHEN 4 THEN 'DRAFT'
+    ELSE status
+END;

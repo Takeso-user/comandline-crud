@@ -15,4 +15,12 @@ public enum PostStatus {
     public Long id() {
         return id;
     }
+    public static PostStatus fromId(Long id) {
+        for (PostStatus status : values()) {
+            if (status.id.equals(id)) {
+                return status;
+            }
+        }
+        throw new IllegalArgumentException("Invalid PostStatus id: " + id);
+    }
 }

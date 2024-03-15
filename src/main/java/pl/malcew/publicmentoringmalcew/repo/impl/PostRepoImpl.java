@@ -11,9 +11,7 @@ import pl.malcew.publicmentoringmalcew.repo.PostRepo;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 public class PostRepoImpl extends RepoImplConnectionAbstractClass implements PostRepo {
@@ -47,55 +45,59 @@ public class PostRepoImpl extends RepoImplConnectionAbstractClass implements Pos
         }
     }
 
-   @Override
-public Post read(Long id) {
-    LOGGER.info("Reading post with id: {}", id);
-    try (Connection connection = getConnection()) {
-        PreparedStatement preparedStatement = connection.prepareStatement(
-                "SELECT p.id, p.content, p.created, p.updated, s.status, w.firstName, w.lastName, GROUP_CONCAT(l.id) as label_ids, GROUP_CONCAT(l.name) as label_names " +
-                        "FROM post p " +
-                        "LEFT JOIN post_labels pl ON p.id = pl.post_id " +
-                        "LEFT JOIN label l ON pl.label_id = l.id " +
-                        "LEFT JOIN poststatus s ON p.status = s.id " +
-                        "LEFT JOIN writer w ON p.writer_id = w.id " +
-                        "WHERE p.id = ? " +
-                        "GROUP BY p.id, p.content, p.created, p.updated, s.status, w.firstName, w.lastName"
-        );
-        preparedStatement.setLong(1, id);
-        var resultSet = preparedStatement.executeQuery();
-        if (resultSet.next()) {
-            List<Label> labels = new ArrayList<>();
-            String labelIds = resultSet.getString("label_ids");
-            String labelNames = resultSet.getString("label_names");
-            if (labelIds != null && labelNames != null) {
-                String[] ids = labelIds.split(",");
-                String[] names = labelNames.split(",");
-                for (int i = 0; i < ids.length; i++) {
-                    labels.add(new Label(Long.parseLong(ids[i]), names[i]));
-                }
-            }
-
-            PostStatus status = PostStatus.valueOf(resultSet.getString("status"));
-            Writer writer = new Writer(null,
-                    resultSet.getString("firstName"),
-                    resultSet.getString("lastName"),
-                    null);
-            return new Post(
-                    resultSet.getLong("id"),
-                    resultSet.getString("content"),
-                    resultSet.getObject("created", java.time.LocalDateTime.class),
-                    resultSet.getObject("updated", java.time.LocalDateTime.class),
-                    labels,
-                    status,
-                    writer
+    @Override
+    public Post read(Long id) {
+        LOGGER.info("Reading post with id: {}", id);
+        List<Post> entities = new ArrayList<>();
+        try (Connection connection = getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "SELECT p.id, p.content, p.created, p.updated, s.status, w.firstName, w.lastName, GROUP_CONCAT(l.id) as label_ids, GROUP_CONCAT(l.name) as label_names " +
+                            "FROM post p " +
+                            "LEFT JOIN post_labels pl ON p.id = pl.post_id " +
+                            "LEFT JOIN label l ON pl.label_id = l.id " +
+                            "LEFT JOIN poststatus s ON p.status = s.id " +
+                            "LEFT JOIN writer w ON p.writer_id = w.id " +
+                            "WHERE p.id = ? " +
+                            "GROUP BY p.id, p.content, p.created, p.updated, s.status, w.firstName, w.lastName"
             );
+            preparedStatement.setLong(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+
+            while (resultSet.next()) {
+                List<Label> labels = new ArrayList<>();
+                String labelIds = resultSet.getString("label_ids");
+                String labelNames = resultSet.getString("label_names");
+                if (labelIds != null && labelNames != null) {
+                    String[] ids = labelIds.split(",");
+                    String[] names = labelNames.split(",");
+                    for (int i = 0; i < ids.length; i++) {
+                        labels.add(new Label(Long.parseLong(ids[i]), names[i]));
+                    }
+                }
+
+                String statusString = resultSet.getString("status");
+                PostStatus status = statusString != null ? PostStatus.valueOf(statusString) : PostStatus.ACTIVE; // replace DEFAULT_STATUS with the default status you want to use
+                Writer writer = new Writer(null,
+                        resultSet.getString("firstName"),
+                        resultSet.getString("lastName"),
+                        null);
+                entities.add(new Post(
+                        resultSet.getLong("id"),
+                        resultSet.getString("content"),
+                        resultSet.getObject("created", java.time.LocalDateTime.class),
+                        resultSet.getObject("updated", java.time.LocalDateTime.class),
+                        labels,
+                        status,
+                        writer
+                ));
+            }
+        } catch (SQLException ex) {
+            LOGGER.error("Error viewing posts: ", ex);
+            throw new RuntimeException(ex);
         }
-    } catch (SQLException ex) {
-        LOGGER.error("Error reading post: ", ex);
-        throw new RuntimeException(ex);
+        return entities.get(0);
     }
-    return null;
-}
 
     @Override
     public List<Post> viewAll() {
@@ -112,7 +114,6 @@ public Post read(Long id) {
                             "GROUP BY p.id, p.content, p.created, p.updated, s.status, w.firstName, w.lastName"
             );
             ResultSet resultSet = preparedStatement.executeQuery();
-
 
 
             while (resultSet.next()) {

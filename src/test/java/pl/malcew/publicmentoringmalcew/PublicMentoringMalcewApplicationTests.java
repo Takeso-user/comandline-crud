@@ -8,6 +8,7 @@ class PublicMentoringMalcewApplicationTests {
 
     @Test
     void contextLoads() {
+        assert true;
     }
 
 }
