@@ -4,6 +4,10 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+
+# Exclude surefire-reports directory
+target/surefire-reports/
+
 ### STS ###
 .apt_generated
 .classpath
