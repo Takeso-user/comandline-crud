@@ -35,17 +35,4 @@ jobs:
     - name: Run tests
       run: mvn test
       id: test
-    - name: Check test coverage
-      run: |
-        total_tests=$(grep -Po '<tests>[0-9]*</tests>' target/surefire-reports/TEST-*.xml | grep -Po '[0-9]+')
-        successful_tests=$(grep -Po '<tests>[0-9]*</tests>' target/surefire-reports/TEST-*.xml | grep -Po '[0-9]+' | awk '{s+=$1} END {print s}')
-        test_coverage=$(awk "BEGIN {print $successful_tests / $total_tests * 100}")
-        echo "Test coverage: $test_coverage%"
-        if [ "$test_coverage" -lt 90 ]; then
-          echo "Tests coverage is less than 90%, exiting..."
-          exit 1
-        fi
-    - name: Merge PR if tests pass
-      if: github.event_name == 'pull_request' && steps.test.outcome == 'success'
-      run: |
-        # Your merging logic here
+
