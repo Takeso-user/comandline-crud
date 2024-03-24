@@ -3,6 +3,7 @@ databaseChangeLog:
       id: insert-labels
       author: takeso
       changes:
-        - sqlFile:
-            path: ../data/insert_labels.sql
-            relativeToChangelogFile: true
+        - loadData:
+            file: db/changelog/data/insert_labels.csv
+            separator: ","
+            tableName: label

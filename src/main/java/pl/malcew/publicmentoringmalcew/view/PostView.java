@@ -94,7 +94,7 @@ public class PostView {
     public Label enterLabel() {
         System.out.println("Enter label name: ");
         String name = scanner.nextLine();
-        return new Label(null, name);
+        return new Label(null, name, null);
     }
 
     public Post updatePost(Post post) {

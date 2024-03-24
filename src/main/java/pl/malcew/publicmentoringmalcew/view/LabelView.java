@@ -36,7 +36,7 @@ public class LabelView {
     public Label updateLabel(Label label) {
         System.out.print("Enter new label name: ");
         String name = scanner.next();
-        return new Label(label.id(), name);
+        return new Label(label.id(), name, label.status());
     }
 
 

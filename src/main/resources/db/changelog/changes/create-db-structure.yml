@@ -3,6 +3,23 @@ databaseChangeLog:
       id: create-db-structure
       author: takeso
       changes:
+#1. Create writerstatus table
+        - createTable:
+            tableName: writerstatus
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+#2. Create writer table
         - createTable:
             tableName: writer
             columns:
@@ -23,6 +40,31 @@ databaseChangeLog:
                   type: varchar(255)
                   constraints:
                     nullable: false
+              - column:
+                  name: status_id
+                  type: bigint
+                  defaultValue: 1
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_writer_status
+                    references: writerstatus(id)
+#3. Create labelstatus table
+        - createTable:
+            tableName: labelstatus
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+#4. Create label table
         - createTable:
             tableName: label
             columns:
@@ -38,6 +80,15 @@ databaseChangeLog:
                   type: varchar(255)
                   constraints:
                     nullable: false
+              - column:
+                  name: status_id
+                  type: bigint
+                  defaultValue: 1
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_label_status
+                    references: labelstatus(id)
+#5. Create poststatus table
         - createTable:
             tableName: poststatus
             columns:
@@ -53,6 +104,7 @@ databaseChangeLog:
                   type: varchar(255)
                   constraints:
                     nullable: false
+#6. Create post table
         - createTable:
             tableName: post
             columns:
@@ -79,7 +131,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: status
+                  name: status_id
                   type: bigint
                   defaultValue: 1
                   constraints:
@@ -93,6 +145,9 @@ databaseChangeLog:
                     nullable: false
                     foreignKeyName: fk_post_writer
                     references: writer(id)
+
+
+#7. Create post-label table
         - createTable:
             tableName: post_labels
             columns:

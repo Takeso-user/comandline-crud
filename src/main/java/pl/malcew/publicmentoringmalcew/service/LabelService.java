@@ -19,7 +19,7 @@ public class LabelService {
 
     public Long createLabel(String name) {
         LOGGER.info("Creating label with name: {}", name);
-        Long id = labelRepo.create(new Label(null, name));
+        Long id = labelRepo.create(new Label(null, name, null));
         LOGGER.info("Label created with id: {}", id);
         return id;
     }

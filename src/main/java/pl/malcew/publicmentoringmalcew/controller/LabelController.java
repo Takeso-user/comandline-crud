@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import pl.malcew.publicmentoringmalcew.model.Label;
+import pl.malcew.publicmentoringmalcew.model.LabelStatus;
 import pl.malcew.publicmentoringmalcew.service.LabelService;
 import pl.malcew.publicmentoringmalcew.view.LabelView;
 
@@ -60,7 +61,8 @@ public class LabelController {
     void updateLabel() {
         Long id = labelView.provideLabelId();
         String name = labelView.provideLabelName();
-        Label label = new Label(id, name);
+        LabelStatus status = LabelStatus.ACTIVE;
+        Label label = new Label(id, name, status);
         LOGGER.info("Updating label with id: " + id);
         LOGGER.info("New label : " + labelService.updateLabel(label));
     }

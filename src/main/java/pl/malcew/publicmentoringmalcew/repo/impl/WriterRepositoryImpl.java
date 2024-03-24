@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import pl.malcew.publicmentoringmalcew.model.Writer;
+import pl.malcew.publicmentoringmalcew.model.WriterStatus;
 import pl.malcew.publicmentoringmalcew.repo.WriterRepo;
 
 import java.sql.*;
@@ -19,13 +20,21 @@ public class WriterRepositoryImpl extends RepoImplConnectionAbstractClass implem
     public Long create(Writer entity) {
         LOGGER.info("Creating writer: {}", entity);
         try (Connection connection = getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO writer (firstName, lastName) VALUES (?, ?)");
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "INSERT INTO writer (firstName, lastName, status_id) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, entity.firstName());
             preparedStatement.setString(2, entity.lastName());
+            preparedStatement.setLong(3, 1L); // Set status_id to 1 (ACTIVE) by default
             preparedStatement.executeUpdate();
+
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                return generatedKeys.getLong(1);
+            } else {
+                LOGGER.error("Creating writer failed, no ID obtained.");
+            }
         } catch (SQLException e) {
             LOGGER.error("Error creating writer: ", e);
-            throw new RuntimeException(e);
         }
         return null;
     }
@@ -40,11 +49,12 @@ public class WriterRepositoryImpl extends RepoImplConnectionAbstractClass implem
             if (resultSet.next()) {
                 String firstName = resultSet.getString("firstName");
                 String lastName = resultSet.getString("lastName");
-                return new Writer(id, firstName, lastName, null);
+                Long statusId = resultSet.getLong("status_id");
+                WriterStatus status = WriterStatus.getById(statusId);
+                return new Writer(id, firstName, lastName, null, status);
             }
         } catch (SQLException e) {
             LOGGER.error("Error reading writer: ", e);
-            throw new RuntimeException(e);
         }
         return null;
     }
@@ -58,14 +68,15 @@ public class WriterRepositoryImpl extends RepoImplConnectionAbstractClass implem
             ResultSet resultSet = statement.executeQuery("SELECT * FROM writer");
 
             while (resultSet.next()) {
-                long id = resultSet.getInt("id");
+                long id = resultSet.getLong("id");
                 String firstName = resultSet.getString("firstName");
                 String lastName = resultSet.getString("lastName");
-                entities.add(new Writer(id, firstName, lastName, null));
+                Long statusId = resultSet.getLong("status_id");
+                WriterStatus status = WriterStatus.getById(statusId);
+                entities.add(new Writer(id, firstName, lastName, null, status));
             }
         } catch (SQLException e) {
             LOGGER.error("Error viewing writers: ", e);
-            throw new RuntimeException(e);
         }
         return entities;
     }
@@ -74,10 +85,12 @@ public class WriterRepositoryImpl extends RepoImplConnectionAbstractClass implem
     public Writer update(Writer entity) {
         LOGGER.info("Updating writer: {}", entity);
         try (Connection connection = getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE writer SET firstName = ?, lastName = ? WHERE id = ?");
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "UPDATE writer SET firstName = ?, lastName = ?, status_id = ? WHERE id = ?");
             preparedStatement.setString(1, entity.firstName());
             preparedStatement.setString(2, entity.lastName());
-            preparedStatement.setLong(3, entity.id());
+            preparedStatement.setLong(3, entity.status().getIdByName());
+            preparedStatement.setLong(4, entity.id());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             LOGGER.error("Error updating writer: ", e);
@@ -88,16 +101,15 @@ public class WriterRepositoryImpl extends RepoImplConnectionAbstractClass implem
 
     @Override
     public Long delete(Writer entity) {
-        LOGGER.info("Deleting writer: {}", entity);
+        LOGGER.info("Soft deleting writer: {}", entity);
         try (Connection connection = getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM writer WHERE id = ?");
-            preparedStatement.setLong(1, entity.id());
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "UPDATE writer SET status_id = ? WHERE id = ?");
+            preparedStatement.setLong(1, WriterStatus.DELETED.getIdByName());
+            preparedStatement.setLong(2, entity.id());
             preparedStatement.executeUpdate();
-        } catch (SQLIntegrityConstraintViolationException e) {
-            LOGGER.error("Cannot delete writer due to existing references: ", e);
-            return 0L;
-        } catch (Exception e) {
-            LOGGER.error("Error deleting writer: ", e);
+        } catch (SQLException e) {
+            LOGGER.error("Error soft deleting writer: ", e);
             return 0L;
         }
         return entity.id();

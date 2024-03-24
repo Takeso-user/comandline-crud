@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import pl.malcew.publicmentoringmalcew.model.Label;
+import pl.malcew.publicmentoringmalcew.model.LabelStatus;
 import pl.malcew.publicmentoringmalcew.repo.LabelRepo;
 
 import java.sql.*;
@@ -46,7 +47,9 @@ public class LabelRepoImpl extends RepoImplConnectionAbstractClass implements La
             preparedStatement.setLong(1, id);
             var resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                return new Label(id, resultSet.getString("name"));
+                return new Label(id,
+                        resultSet.getString("name"),
+                        LabelStatus.getById(resultSet.getLong("status_id")));
             }
         } catch (Exception e) {
             LOGGER.error("Error reading label: ", e);
@@ -67,7 +70,11 @@ public class LabelRepoImpl extends RepoImplConnectionAbstractClass implements La
                 LOGGER.info("!!Reading label with id: {}", id);
                 String name = resultSet.getString(2);
                 LOGGER.info("!!Reading label with name: {}", name);
-                entities.add(new Label(id, name));
+                Long statusId = resultSet.getLong(3);
+                entities.add(new Label(
+                        id,
+                        name,
+                        LabelStatus.getById(resultSet.getLong("status_id"))));
             }
         } catch (Exception e) {
             LOGGER.error("Error reading labels: ", e);
@@ -79,9 +86,10 @@ public class LabelRepoImpl extends RepoImplConnectionAbstractClass implements La
     public Label update(Label entity) {
         LOGGER.info("Updating label: {}", entity);
         try (Connection connection = getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE label SET name = ? WHERE id = ?");
+            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE label SET name = ?, status_id = ? WHERE id = ?");
             preparedStatement.setString(1, entity.name());
-            preparedStatement.setLong(2, entity.id());
+            preparedStatement.setLong(2, entity.status().getIdByName()); // Use statusId instead of id
+            preparedStatement.setLong(3, entity.id());
             preparedStatement.executeUpdate();
         } catch (Exception e) {
             LOGGER.error("Error updating label: ", e);
@@ -91,16 +99,14 @@ public class LabelRepoImpl extends RepoImplConnectionAbstractClass implements La
 
     @Override
     public Long delete(Label entity) {
-        LOGGER.info("Deleting label: {}", entity);
+        LOGGER.info("Soft deleting label: {}", entity);
         try (Connection connection = getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM label WHERE id = ?");
-            preparedStatement.setLong(1, entity.id());
+            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE label SET status_id = ? WHERE id = ?");
+            preparedStatement.setLong(1, 2L); // Set status_id to 2 (DELETED)
+            preparedStatement.setLong(2, entity.id());
             preparedStatement.executeUpdate();
-        } catch (SQLIntegrityConstraintViolationException e) {
-            LOGGER.error("Cannot delete label due to existing references: ", e);
-
         } catch (Exception e) {
-            LOGGER.error("Error deleting label: ", e);
+            LOGGER.error("Error soft deleting label: ", e);
             return 0L;
         }
         return entity.id();

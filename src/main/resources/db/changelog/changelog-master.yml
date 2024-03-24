@@ -1,13 +1,24 @@
 databaseChangeLog:
   - include:
       file: db/changelog/changes/create-db-structure.yml
+
+  - include:
+      file: db/changelog/changes/insert-writerstatus.yml
+
   - include:
       file: db/changelog/changes/insert-writers.yml
+
+  - include:
+      file: db/changelog/changes/insert-label-status.yml
+
   - include:
       file: db/changelog/changes/insert-labels.yml
-  - include:
-      file: db/changelog/changes/insert-posts.yml
-  - include:
-      file: db/changelog/changes/insert-posts-labels.yml
+
   - include:
       file: db/changelog/changes/insert-poststatus.yml
+
+  - include:
+      file: db/changelog/changes/insert-posts.yml
+
+  - include:
+      file: db/changelog/changes/insert-posts-labels.yml

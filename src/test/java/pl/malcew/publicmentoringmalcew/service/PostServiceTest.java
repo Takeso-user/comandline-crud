@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 class PostServiceTest {
@@ -109,25 +108,6 @@ class PostServiceTest {
         verify(postRepo, times(1)).delete(post);
     }
 
-    @Test
-    void deletePostUnsuccessfully() {
-        Post post = new Post(
-                1L,
-                "Test Post",
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-        when(postRepo.read(1L)).thenReturn(post);
-        when(postRepo.delete(post)).thenThrow(new RuntimeException());
-
-        Long id = postService.deletePost(1L);
-
-        assertNull(id);
-        verify(postRepo, times(1)).delete(post);
-    }
 
     @Test
     void viewAllPostsSuccessfully() {

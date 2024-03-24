@@ -6,13 +6,7 @@ public record Writer (
     Long id,
     String firstName,
     String lastName,
-    List<Post> posts
+    List<Post> posts,
+    WriterStatus status
 ){
-    @Override
-    public String toString() {
-        return "Writer[" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ']';
-    }
 }

@@ -3,6 +3,7 @@ databaseChangeLog:
       id: insert-poststatus
       author: takeso
       changes:
-        - sqlFile:
-            path: ../data/insert_poststatus.sql
-            relativeToChangelogFile: true
+        - loadData:
+            separator: ","
+            file: db/changelog/data/insert_poststatus.csv
+            tableName: poststatus

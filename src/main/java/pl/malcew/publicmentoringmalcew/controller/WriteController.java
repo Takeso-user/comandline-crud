@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import pl.malcew.publicmentoringmalcew.model.Writer;
+import pl.malcew.publicmentoringmalcew.model.WriterStatus;
 import pl.malcew.publicmentoringmalcew.service.WriterService;
 import pl.malcew.publicmentoringmalcew.view.WriterView;
 
@@ -56,7 +57,7 @@ public class WriteController {
         Writer createWriter = writerView.readWriter();
         String firstName = createWriter.firstName();
         String lastName = createWriter.lastName();
-        Writer wr = new Writer(null, firstName, lastName, null);
+        Writer wr = new Writer(null, firstName, lastName, null, WriterStatus.ACTIVE);
         var id = writerService.createWriter(wr);
         LOGGER.info("Writer {} with id {} created successfully", wr, id);
     }

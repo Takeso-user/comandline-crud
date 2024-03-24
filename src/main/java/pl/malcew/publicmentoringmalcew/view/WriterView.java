@@ -2,6 +2,7 @@ package pl.malcew.publicmentoringmalcew.view;
 
 import org.springframework.stereotype.Component;
 import pl.malcew.publicmentoringmalcew.model.Writer;
+import pl.malcew.publicmentoringmalcew.model.WriterStatus;
 
 import java.util.List;
 import java.util.Scanner;
@@ -33,17 +34,15 @@ public class WriterView {
         String firstName = scanner.next();
         System.out.print("Enter Writer Last Name: ");
         String lastName = scanner.next();
-        return new Writer(null, firstName, lastName, null);
+        return new Writer(null, firstName, lastName, null, WriterStatus.ACTIVE);
     }
 
     public Writer updateWriter(Writer writer) {
-
-
         System.out.print("\n Enter new Writer First Name: ");
         String firstName = (scanner.next());
         System.out.print("\n Enter new Writer Last Name: ");
         String lastName = (scanner.next());
-        return new Writer(writer.id(), firstName, lastName, writer.posts());
+        return new Writer(writer.id(), firstName, lastName, writer.posts(), writer.status());
     }
 
 public void displayWriters(List<Writer> writers) {
