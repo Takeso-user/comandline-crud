@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import pl.malcew.publicmentoringmalcew.model.Writer;
+import pl.malcew.publicmentoringmalcew.model.WriterStatus;
 import pl.malcew.publicmentoringmalcew.repo.WriterRepo;
 
 import java.util.Arrays;
@@ -33,7 +34,8 @@ class WriterServiceTest {
                 null,
                 "Test ",
                 "Writer",
-                null
+                null,
+                WriterStatus.ACTIVE
         );
         when(writerRepo.create(any(Writer.class))).thenReturn(1L);
 
@@ -49,7 +51,8 @@ class WriterServiceTest {
                 null,
                 "Test",
                 " Writer",
-                null
+                null,
+                WriterStatus.ACTIVE
         );
         when(writerRepo.read(1L)).thenReturn(writer);
 
@@ -65,7 +68,8 @@ class WriterServiceTest {
                 null,
                 "Test",
                 " Writer",
-                null
+                null,
+                WriterStatus.ACTIVE
         );
         when(writerRepo.update(writer)).thenReturn(writer);
 
@@ -81,7 +85,8 @@ class WriterServiceTest {
                 null,
                 "Test",
                 " Writer",
-                null
+                null,
+                WriterStatus.ACTIVE
         );
         when(writerRepo.read(1L)).thenReturn(writer);
         when(writerRepo.delete(writer)).thenReturn(1L);
@@ -98,7 +103,8 @@ class WriterServiceTest {
                 null,
                 "Test",
                 " Writer",
-                null
+                null,
+                WriterStatus.ACTIVE
         );
         when(writerRepo.read(1L)).thenReturn(writer);
         when(writerRepo.delete(writer)).thenThrow(new RuntimeException());
@@ -116,13 +122,15 @@ class WriterServiceTest {
                         null,
                         "Test",
                         " Writer",
-                        null
+                        null,
+                        WriterStatus.ACTIVE
                 ),
                 new Writer(
                         null,
                         "Test2",
                         " Writer2",
-                        null
+                        null,
+                        WriterStatus.ACTIVE
                 ));
         when(writerRepo.viewAll()).thenReturn(writers);
 

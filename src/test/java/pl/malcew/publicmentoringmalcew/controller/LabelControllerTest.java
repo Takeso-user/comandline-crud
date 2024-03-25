@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import pl.malcew.publicmentoringmalcew.model.Label;
+import pl.malcew.publicmentoringmalcew.model.LabelStatus;
 import pl.malcew.publicmentoringmalcew.service.LabelService;
 import pl.malcew.publicmentoringmalcew.view.LabelView;
 
@@ -43,7 +44,7 @@ class LabelControllerTest {
 
     @Test
     void readLabelSuccessfully() {
-        Label label = new Label(1L, "Test Label");
+        Label label = new Label(1L, "Test Label", LabelStatus.ACTIVE);
         when(labelView.provideLabelId()).thenReturn(1L);
         when(labelService.readLabel(anyLong())).thenReturn(label);
 
@@ -55,7 +56,7 @@ class LabelControllerTest {
 
     @Test
     void updateLabelSuccessfully() {
-        Label label = new Label(1L, "Test Label");
+        Label label = new Label(1L, "Test Label", LabelStatus.ACTIVE);
         when(labelView.provideLabelId()).thenReturn(1L);
         when(labelView.provideLabelName()).thenReturn("Test Label");
         when(labelService.updateLabel(any(Label.class))).thenReturn(label);
@@ -80,7 +81,9 @@ class LabelControllerTest {
 
     @Test
     void viewAllLabelsSuccessfully() {
-        List<Label> labels = Arrays.asList(new Label(1L, "Test Label 1"), new Label(2L, "Test Label 2"));
+        List<Label> labels = Arrays.asList(
+                new Label(1L, "Test Label 1", LabelStatus.ACTIVE),
+                new Label(2L, "Test Label 2", LabelStatus.ACTIVE));
         when(labelService.viewAllLabels()).thenReturn(labels);
 
         labelController.viewAllLabels();

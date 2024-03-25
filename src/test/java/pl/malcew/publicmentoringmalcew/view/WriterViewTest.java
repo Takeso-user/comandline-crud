@@ -4,6 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import pl.malcew.publicmentoringmalcew.model.Writer;
+import pl.malcew.publicmentoringmalcew.model.WriterStatus;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -32,11 +33,13 @@ class WriterViewTest {
         Writer writer1 = new Writer(null,
                 "Test1",
                 " Writer1",
-                null);
+                null,
+                WriterStatus.ACTIVE);
         Writer writer2 = new Writer(null,
                 "Test2",
                 " Writer2",
-                null);
+                null,
+                WriterStatus.ACTIVE);
 
         writerView.displayWriters(Arrays.asList(writer1, writer2));
 

@@ -18,24 +18,20 @@ public class PostRepoImpl extends RepoImplConnectionAbstractClass implements Pos
     @Override
     public Long create(Post entity) {
         LOGGER.info("Creating post: {}", entity);
-        try (Connection connection = getConnection()) {
-            // Check if the writer is active
-            PreparedStatement checkWriterStatement = connection.prepareStatement(
-                    "SELECT status_id, firstName, lastName FROM writer WHERE id = ?");
-            checkWriterStatement.setLong(1, entity.writer().id());
-            ResultSet writerStatusResult = checkWriterStatement.executeQuery();
-            if (writerStatusResult.next()) {
-                Long statusId = writerStatusResult.getLong("status_id");
-                String firstName = writerStatusResult.getString("firstName");
-                String lastName = writerStatusResult.getString("lastName");
-                LOGGER.info("Writer's name: {} {}", firstName, lastName); // Log the writer's first name and last name
-                if (statusId != 1L) { // If the writer's status is not ACTIVE
-                    LOGGER.info("The writer is deleted");
-                    return null; // Do nothing more
-                }
+        try {
+            if (!isWriterActive(entity.writer().id())) {
+                LOGGER.info("The writer is deleted");
+                return null;
             }
+            return createPost(entity);
+        } catch (SQLException ex) {
+            LOGGER.error("Error creating post: ", ex);
+            throw new RuntimeException(ex);
+        }
+    }
 
-            // If the writer is active, create the post
+    Long createPost(Post entity) throws SQLException {
+        try (Connection connection = getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "INSERT INTO post (content, created, updated, status_id, writer_id) VALUES (?, ?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
@@ -53,10 +49,24 @@ public class PostRepoImpl extends RepoImplConnectionAbstractClass implements Pos
             } else {
                 throw new SQLException("Creating post failed, no ID obtained.");
             }
-        } catch (SQLException ex) {
-            LOGGER.error("Error creating post: ", ex);
-            throw new RuntimeException(ex);
         }
+    }
+
+    boolean isWriterActive(Long writerId) throws SQLException {
+        try (Connection connection = getConnection()) {
+            PreparedStatement checkWriterStatement = connection.prepareStatement(
+                    "SELECT status_id, firstName, lastName FROM writer WHERE id = ?");
+            checkWriterStatement.setLong(1, writerId);
+            ResultSet writerStatusResult = checkWriterStatement.executeQuery();
+            if (writerStatusResult.next()) {
+                Long statusId = writerStatusResult.getLong("status_id");
+                String firstName = writerStatusResult.getString("firstName");
+                String lastName = writerStatusResult.getString("lastName");
+                LOGGER.info("Writer's name: {} {}", firstName, lastName); // Log the writer's first name and last name
+                return statusId == 1L; // return true if the writer's status is ACTIVE
+            }
+        }
+        return false;
     }
 
     @Override

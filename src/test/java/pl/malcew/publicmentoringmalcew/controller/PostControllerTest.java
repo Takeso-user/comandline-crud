@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import pl.malcew.publicmentoringmalcew.model.Post;
 import pl.malcew.publicmentoringmalcew.model.Writer;
+import pl.malcew.publicmentoringmalcew.model.WriterStatus;
 import pl.malcew.publicmentoringmalcew.service.PostService;
 import pl.malcew.publicmentoringmalcew.service.WriterService;
 import pl.malcew.publicmentoringmalcew.view.PostView;
@@ -45,7 +46,8 @@ class PostControllerTest {
                 null,
                 "Test ",
                 "Writer",
-                null
+                null,
+                WriterStatus.ACTIVE
         );
         Post post = new Post(
                 1L,

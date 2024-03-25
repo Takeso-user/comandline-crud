@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import pl.malcew.publicmentoringmalcew.model.Writer;
+import pl.malcew.publicmentoringmalcew.model.WriterStatus;
 import pl.malcew.publicmentoringmalcew.service.WriterService;
 import pl.malcew.publicmentoringmalcew.view.WriterView;
 
@@ -32,7 +33,7 @@ class WriteControllerTest {
 
     @Test
     void createWriterSuccessfully() {
-        Writer writer = new Writer(null,"Test", "Writer",null);
+        Writer writer = new Writer(null, "Test", "Writer", null, WriterStatus.ACTIVE);
         when(writerView.readWriter()).thenReturn(writer);
         when(writerService.createWriter(any(Writer.class))).thenReturn(1L);
 
@@ -44,7 +45,7 @@ class WriteControllerTest {
 
     @Test
     void updateWriterSuccessfully() {
-        Writer existingWriter = new Writer(null,"Test", "Writer",null);
+        Writer existingWriter = new Writer(null, "Test", "Writer", null, WriterStatus.ACTIVE);
         when(writerView.provideWriterId()).thenReturn(1L);
         when(writerService.readWriter(anyLong())).thenReturn(existingWriter);
         when(writerView.updateWriter(any(Writer.class))).thenReturn(existingWriter);
@@ -60,7 +61,7 @@ class WriteControllerTest {
 
     @Test
     void deleteWriterSuccessfully() {
-        Writer writerToDelete = new Writer(null,"Test", "Writer",null);
+        Writer writerToDelete = new Writer(null, "Test", "Writer", null, WriterStatus.ACTIVE);
         when(writerView.provideWriterId()).thenReturn(1L);
         when(writerService.readWriter(anyLong())).thenReturn(writerToDelete);
         when(writerService.deleteWriter(any(Writer.class))).thenReturn(1L);
@@ -75,8 +76,8 @@ class WriteControllerTest {
     @Test
     void viewAllWritersSuccessfully() {
         List<Writer> writers = Arrays.asList(
-                new Writer(null,"Test1", "Writer1",null),
-                new Writer(null,"Test2", "Writer2",null));
+                new Writer(null, "Test1", "Writer1", null, WriterStatus.ACTIVE),
+                new Writer(null, "Test2", "Writer2", null, WriterStatus.ACTIVE));
         when(writerService.viewAllWriters()).thenReturn(writers);
 
         writeController.viewAllWriters();

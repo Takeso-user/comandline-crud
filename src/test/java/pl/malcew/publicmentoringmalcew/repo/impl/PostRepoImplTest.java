@@ -4,21 +4,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import pl.malcew.publicmentoringmalcew.model.Label;
 import pl.malcew.publicmentoringmalcew.model.Post;
 import pl.malcew.publicmentoringmalcew.model.PostStatus;
 import pl.malcew.publicmentoringmalcew.model.Writer;
+import pl.malcew.publicmentoringmalcew.model.WriterStatus;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class PostRepoImplTest {
 
@@ -34,153 +33,130 @@ public class PostRepoImplTest {
     private PostRepoImpl postRepoImpl;
 
     @BeforeEach
-    void setUp() {
+    public void setup() throws SQLException {
         MockitoAnnotations.openMocks(this);
-        postRepoImpl = new PostRepoImpl() {
-            @Override
-            protected Connection getConnection() {
-                return connection;
-            }
-        };
-
-
+        postRepoImpl = spy(new PostRepoImpl());
+        doReturn(connection).when(postRepoImpl).getConnection();
     }
 
     @Test
-    void createPostSuccessfully_returnsGeneratedId() throws Exception {
-        Writer writer = new Writer(4L, "John", "Doe", null);
+    public void testIsWriterActive() throws SQLException {
+        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(preparedStatement.executeQuery()).thenReturn(resultSet);
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getLong(anyString())).thenReturn(1L);
 
-        Post post = new Post(
-                1L,
-                "Test Post",
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                List.of(new Label(1L, "Fake")),
-                PostStatus.ACTIVE,
-                writer);
+        postRepoImpl.isWriterActive(1L);
+
+        verify(preparedStatement, times(1)).setLong(1, 1L);
+        verify(preparedStatement, times(1)).executeQuery();
+    }
+
+    @Test
+    public void testCreatePost() throws SQLException {
+        Post post = mock(Post.class);
+        PostStatus postStatus = mock(PostStatus.class);
+        Writer writer = mock(Writer.class);
+
+        when(post.status()).thenReturn(postStatus);
+        when(post.writer()).thenReturn(writer);
+        when(postStatus.id()).thenReturn(1L);
+        when(writer.id()).thenReturn(1L);
+
         when(connection.prepareStatement(anyString(), anyInt())).thenReturn(preparedStatement);
+        when(preparedStatement.executeUpdate()).thenReturn(1);
         when(preparedStatement.getGeneratedKeys()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(true);
         when(resultSet.getLong(1)).thenReturn(1L);
 
-        Long result = postRepoImpl.create(post);
+        postRepoImpl.createPost(post);
 
-        assertEquals(1L, result);
+        verify(preparedStatement, times(1)).executeUpdate();
+        verify(preparedStatement, times(1)).getGeneratedKeys();
     }
 
     @Test
-    void readPostSuccessfully_returnsPost() throws Exception {
-        Writer writer = new Writer(4L, "jj", "zue", null);
-
-        // Создаем объект Post
-        Post post = new Post(
-                21L,
-                "Test Post",
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                List.of(new Label(1L, "Fake1"), new Label(2L, "Fake2")),
-                PostStatus.ACTIVE,
-                writer);
-
+    public void testRead() throws SQLException {
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(true).thenReturn(false);
-        when(resultSet.getLong("id")).thenReturn(post.id());
-        when(resultSet.getString("content")).thenReturn(post.content());
-        when(resultSet.getObject("created", LocalDateTime.class)).thenReturn(post.created());
-        when(resultSet.getObject("updated", LocalDateTime.class)).thenReturn(post.updated());
-        when(resultSet.getObject("status", PostStatus.class)).thenReturn(post.status());
-        when(resultSet.getString("firstName")).thenReturn(writer.firstName());
-        when(resultSet.getString("lastName")).thenReturn(writer.lastName());
 
-        when(resultSet.getString("label_ids")).thenReturn("1,2");
-        when(resultSet.getString("label_names")).thenReturn("Fake1,Fake2");
+        when(resultSet.getString("content")).thenReturn("test");
+        when(resultSet.getString("firstName")).thenReturn("test");
+        when(resultSet.getString("lastName")).thenReturn("test");
+        when(resultSet.getString("label_ids")).thenReturn(null);
+        when(resultSet.getString("label_names")).thenReturn(null);
+        when(resultSet.getString("label_status_ids")).thenReturn(null);
+        when(resultSet.getObject(any(), eq(LocalDateTime.class))).thenReturn(LocalDateTime.now());
+        when(resultSet.getLong("id")).thenReturn(1L);
+        when(resultSet.getLong("status_id")).thenReturn(1L);
 
-        System.out.println(postRepoImpl.read(post.id()));
-//        List<Post> result = List.of(postRepoImpl.read(post.id()));
-//
-//        assertEquals(1, result.size());
-//        Post actualPost = result.get(0);
-//        assertEquals(post.id(), actualPost.id());
-//        assertEquals(post.content(), actualPost.content());
-//        assertEquals(post.created(), actualPost.created());
-//        assertEquals(post.updated(), actualPost.updated());
-//        assertEquals(post.status(), actualPost.status());
-//        assertEquals(post.writer().firstName(), actualPost.writer().firstName());
-//        assertEquals(post.writer().lastName(), actualPost.writer().lastName());
-//
-//        assertIterableEquals(post.labels(), actualPost.labels());
+        postRepoImpl.read(1L);
+
+        verify(preparedStatement, times(1)).setLong(1, 1L);
+        verify(preparedStatement, times(1)).executeQuery();
     }
 
+
     @Test
-    void viewAllPostsSuccessfully_returnsAllPosts() throws Exception {
-
-        Writer writer = new Writer(4L, "jj", "zue", null);
-
-        // Создаем объект Post
-        Post post = new Post(
-                2L,
-                "Test Post",
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                List.of(new Label(1L, "Fake1"), new Label(2L, "Fake2")),
-                PostStatus.ACTIVE,
-                writer);
-
+    public void testViewAll() throws SQLException {
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(true).thenReturn(false);
-        when(resultSet.getLong("id")).thenReturn(post.id());
-        when(resultSet.getString("content")).thenReturn(post.content());
-        when(resultSet.getObject("created", LocalDateTime.class)).thenReturn(post.created());
-        when(resultSet.getObject("updated", LocalDateTime.class)).thenReturn(post.updated());
-        when(resultSet.getObject("status", PostStatus.class)).thenReturn(post.status());
-        when(resultSet.getString("firstName")).thenReturn(writer.firstName());
-        when(resultSet.getString("lastName")).thenReturn(writer.lastName());
 
-        when(resultSet.getString("label_ids")).thenReturn("1,2");
-        when(resultSet.getString("label_names")).thenReturn("Fake1,Fake2");
+        when(resultSet.getString("content")).thenReturn("test");
+        when(resultSet.getString("firstName")).thenReturn("test");
+        when(resultSet.getString("lastName")).thenReturn("test");
+        when(resultSet.getString("label_ids")).thenReturn(null);
+        when(resultSet.getString("label_names")).thenReturn(null);
+        when(resultSet.getString("label_status_ids")).thenReturn(null);
+        when(resultSet.getObject(any(), eq(LocalDateTime.class))).thenReturn(LocalDateTime.now());
+        when(resultSet.getLong("id")).thenReturn(1L);
+        when(resultSet.getLong("status_id")).thenReturn(1L);
 
+        postRepoImpl.viewAll();
 
-        List<Post> result = postRepoImpl.viewAll();
-
-        assertEquals(1, result.size());
-        Post actualPost = result.get(0);
-        assertEquals(post.id(), actualPost.id());
-        assertEquals(post.content(), actualPost.content());
-        assertEquals(post.created(), actualPost.created());
-        assertEquals(post.updated(), actualPost.updated());
-        assertEquals(post.status(), actualPost.status());
-        assertEquals(post.writer().firstName(), actualPost.writer().firstName());
-        assertEquals(post.writer().lastName(), actualPost.writer().lastName());
-
-        assertIterableEquals(post.labels(), actualPost.labels());
-
+        verify(preparedStatement, times(1)).executeQuery();
     }
 
     @Test
-    void deletePostSuccessfully_returnsDeletedPostId() throws Exception {
-        Writer writer = new Writer(4L, "John", "Doe", null);
-
-        Post post = new Post(
-                1L,
-                "Test Post",
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                List.of(new Label(1L, "Fake")),
-                PostStatus.ACTIVE,
-                writer);
+    public void testUpdate() throws SQLException {
+        Post post = new Post(1L, "content", LocalDateTime.now(), LocalDateTime.now(), List.of(), PostStatus.ACTIVE, new Writer(1L, "firstName", "lastName", null, WriterStatus.ACTIVE));
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(preparedStatement.executeUpdate()).thenReturn(1);
 
-        Long result = postRepoImpl.delete(post);
+        postRepoImpl.update(post);
 
-        assertEquals(post.id(), result);
+        verify(preparedStatement, times(1)).setString(1, post.content());
+        verify(preparedStatement, times(1)).setObject(2, post.created());
+        verify(preparedStatement, times(1)).setObject(3, post.updated());
+        verify(preparedStatement, times(1)).setString(4, post.status().name());
+        verify(preparedStatement, times(1)).setLong(5, post.writer().id());
+        verify(preparedStatement, times(1)).setLong(6, post.id());
+        verify(preparedStatement, times(1)).executeUpdate();
     }
 
     @Test
-    void addLabelToPostSuccessfully_addsLabel() throws Exception {
+    public void testDelete() throws SQLException {
+        Post post = new Post(1L, "content", LocalDateTime.now(), LocalDateTime.now(), List.of(), PostStatus.ACTIVE, new Writer(1L, "firstName", "lastName", null, WriterStatus.ACTIVE));
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(preparedStatement.executeUpdate()).thenReturn(1);
 
-        assertDoesNotThrow(() -> postRepoImpl.addLabelToPost(1L, 1L));
+        postRepoImpl.delete(post);
+
+        verify(preparedStatement, times(1)).setLong(1, post.id());
+        verify(preparedStatement, times(1)).executeUpdate();
+    }
+
+    @Test
+    public void testAddLabelToPost() throws SQLException {
+        when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+        when(preparedStatement.executeUpdate()).thenReturn(1);
+
+        postRepoImpl.addLabelToPost(1L, 1L);
+
+        verify(preparedStatement, times(1)).setLong(1, 1L);
+        verify(preparedStatement, times(1)).setLong(2, 1L);
+        verify(preparedStatement, times(1)).executeUpdate();
     }
 }

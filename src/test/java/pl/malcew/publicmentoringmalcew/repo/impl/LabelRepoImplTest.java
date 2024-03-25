@@ -43,7 +43,7 @@ public class LabelRepoImplTest {
 
     @Test
     void createLabelSuccessfully_returnsGeneratedId() throws Exception {
-        Label label = new Label(1L, "Test Label");
+        Label label = new Label(1L, "Test Label", null);
         when(connection.prepareStatement(anyString(), anyInt())).thenReturn(preparedStatement);
         when(preparedStatement.getGeneratedKeys()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(true);
@@ -56,7 +56,7 @@ public class LabelRepoImplTest {
 
     @Test
     void createLabelThrowsException_whenNoIdObtained() throws Exception {
-        Label label = new Label(1L, "Test Label");
+        Label label = new Label(1L, "Test Label", null);
         when(connection.prepareStatement(anyString(), anyInt())).thenReturn(preparedStatement);
         when(preparedStatement.getGeneratedKeys()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(false);
@@ -66,7 +66,7 @@ public class LabelRepoImplTest {
 
     @Test
     void readLabelSuccessfully_returnsLabel() throws Exception {
-        Label label = new Label(1L, "Test Label");
+        Label label = new Label(1L, "Test Label", null);
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(true);
@@ -92,8 +92,8 @@ public class LabelRepoImplTest {
     @Test
     void viewAllLabelsSuccessfully_returnsAllLabels() throws Exception {
         List<Label> labels = List.of(
-                new Label(1L, "Test Label 1"),
-                new Label(2L, "Test Label 2"));
+                new Label(1L, "Test Label 1", null),
+                new Label(2L, "Test Label 2", null));
 
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
@@ -103,9 +103,8 @@ public class LabelRepoImplTest {
 
         List<Label> result = labelRepoImpl.viewAll();
 
-        // Loop through each label in the result list
+
         for (int i = 0; i < result.size(); i++) {
-            // Compare each field of the Label record one by one
             assertEquals(labels.get(i).id(), result.get(i).id());
             assertEquals(labels.get(i).name(), result.get(i).name());
         }
@@ -113,7 +112,7 @@ public class LabelRepoImplTest {
 
     @Test
     void updateLabelSuccessfully_returnsUpdatedLabel() throws Exception {
-        Label label = new Label(1L, "Test Label");
+        Label label = new Label(1L, "Test Label", null);
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
 
         Label result = labelRepoImpl.update(label);
@@ -123,7 +122,7 @@ public class LabelRepoImplTest {
 
     @Test
     void deleteLabelSuccessfully_returnsDeletedLabelId() throws Exception {
-        Label label = new Label(1L, "Test Label");
+        Label label = new Label(1L, "Test Label", null);
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
 
         Long result = labelRepoImpl.delete(label);
@@ -133,7 +132,7 @@ public class LabelRepoImplTest {
 
     @Test
     void deleteLabelReturnsZero_whenErrorOccurs() throws Exception {
-        Label label = new Label(1L, "Test Label");
+        Label label = new Label(1L, "Test Label", null);
         when(connection.prepareStatement(anyString())).thenThrow(new SQLException());
 
         Long result = labelRepoImpl.delete(label);

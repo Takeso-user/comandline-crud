@@ -39,7 +39,7 @@ class LabelServiceTest {
 
     @Test
     void readLabelSuccessfully() {
-        Label label = new Label(1L, "Test Label");
+        Label label = new Label(1L, "Test Label", null);
         when(labelRepo.read(1L)).thenReturn(label);
 
         Label result = labelService.readLabel(1L);
@@ -50,7 +50,7 @@ class LabelServiceTest {
 
     @Test
     void updateLabelSuccessfully() {
-        Label label = new Label(1L, "Test Label");
+        Label label = new Label(1L, "Test Label",null);
         when(labelRepo.update(label)).thenReturn(label);
 
         Label result = labelService.updateLabel(label);
@@ -61,7 +61,7 @@ class LabelServiceTest {
 
     @Test
     void deleteLabelSuccessfully() {
-        Label label = new Label(1L, "Test Label");
+        Label label = new Label(1L, "Test Label", null);
         when(labelRepo.read(1L)).thenReturn(label);
         when(labelRepo.delete(label)).thenReturn(1L);
 
@@ -73,7 +73,7 @@ class LabelServiceTest {
 
     @Test
     void deleteLabelUnsuccessfully() {
-        Label label = new Label(1L, "Test Label");
+        Label label = new Label(1L, "Test Label", null);
         when(labelRepo.read(1L)).thenReturn(label);
         when(labelRepo.delete(label)).thenThrow(new RuntimeException());
 
@@ -85,7 +85,9 @@ class LabelServiceTest {
 
     @Test
     void viewAllLabelsSuccessfully() {
-        List<Label> labels = Arrays.asList(new Label(1L, "Test Label 1"), new Label(2L, "Test Label 2"));
+        List<Label> labels = Arrays.asList(
+                new Label(1L, "Test Label 1",null),
+                new Label(2L, "Test Label 2",null));
         when(labelRepo.viewAll()).thenReturn(labels);
 
         List<Label> result = labelService.viewAllLabels();
