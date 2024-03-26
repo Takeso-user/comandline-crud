@@ -33,14 +33,14 @@ public class PostRepoImplTest {
     private PostRepoImpl postRepoImpl;
 
     @BeforeEach
-    public void setup() throws SQLException {
+    public void setupTest() throws SQLException {
         MockitoAnnotations.openMocks(this);
         postRepoImpl = spy(new PostRepoImpl());
         doReturn(connection).when(postRepoImpl).getConnection();
     }
 
     @Test
-    public void testIsWriterActive() throws SQLException {
+    public void testIsWriterActiveTest() throws SQLException {
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(true);
@@ -53,7 +53,7 @@ public class PostRepoImplTest {
     }
 
     @Test
-    public void testCreatePost() throws SQLException {
+    public void testCreatePostTest() throws SQLException {
         Post post = mock(Post.class);
         PostStatus postStatus = mock(PostStatus.class);
         Writer writer = mock(Writer.class);
@@ -76,7 +76,7 @@ public class PostRepoImplTest {
     }
 
     @Test
-    public void testRead() throws SQLException {
+    public void testReadTest() throws SQLException {
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(true).thenReturn(false);
@@ -99,7 +99,7 @@ public class PostRepoImplTest {
 
 
     @Test
-    public void testViewAll() throws SQLException {
+    public void testViewAllTest() throws SQLException {
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(true).thenReturn(false);
@@ -120,7 +120,7 @@ public class PostRepoImplTest {
     }
 
     @Test
-    public void testUpdate() throws SQLException {
+    public void testUpdateTest() throws SQLException {
         Post post = new Post(1L, "content", LocalDateTime.now(), LocalDateTime.now(), List.of(), PostStatus.ACTIVE, new Writer(1L, "firstName", "lastName", null, WriterStatus.ACTIVE));
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
         when(preparedStatement.executeUpdate()).thenReturn(1);
@@ -137,7 +137,7 @@ public class PostRepoImplTest {
     }
 
     @Test
-    public void testDelete() throws SQLException {
+    public void testDeleteTest() throws SQLException {
         Post post = new Post(1L, "content", LocalDateTime.now(), LocalDateTime.now(), List.of(), PostStatus.ACTIVE, new Writer(1L, "firstName", "lastName", null, WriterStatus.ACTIVE));
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
         when(preparedStatement.executeUpdate()).thenReturn(1);
@@ -149,7 +149,7 @@ public class PostRepoImplTest {
     }
 
     @Test
-    public void testAddLabelToPost() throws SQLException {
+    public void testAddLabelToPostTest() throws SQLException {
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
         when(preparedStatement.executeUpdate()).thenReturn(1);
 

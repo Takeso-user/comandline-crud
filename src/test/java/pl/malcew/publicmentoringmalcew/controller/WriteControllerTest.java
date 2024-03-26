@@ -27,12 +27,12 @@ class WriteControllerTest {
     private WriteController writeController;
 
     @BeforeEach
-    void setUp() {
+    void setUpTest() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void createWriterSuccessfully() {
+    void createWriterSuccessfullyTest() {
         Writer writer = new Writer(null, "Test", "Writer", null, WriterStatus.ACTIVE);
         when(writerView.readWriter()).thenReturn(writer);
         when(writerService.createWriter(any(Writer.class))).thenReturn(1L);
@@ -44,7 +44,7 @@ class WriteControllerTest {
     }
 
     @Test
-    void updateWriterSuccessfully() {
+    void updateWriterSuccessfullyTest() {
         Writer existingWriter = new Writer(null, "Test", "Writer", null, WriterStatus.ACTIVE);
         when(writerView.provideWriterId()).thenReturn(1L);
         when(writerService.readWriter(anyLong())).thenReturn(existingWriter);
@@ -60,7 +60,7 @@ class WriteControllerTest {
     }
 
     @Test
-    void deleteWriterSuccessfully() {
+    void deleteWriterSuccessfullyTest() {
         Writer writerToDelete = new Writer(null, "Test", "Writer", null, WriterStatus.ACTIVE);
         when(writerView.provideWriterId()).thenReturn(1L);
         when(writerService.readWriter(anyLong())).thenReturn(writerToDelete);
@@ -74,7 +74,7 @@ class WriteControllerTest {
     }
 
     @Test
-    void viewAllWritersSuccessfully() {
+    void viewAllWritersSuccessfullyTest() {
         List<Writer> writers = Arrays.asList(
                 new Writer(null, "Test1", "Writer1", null, WriterStatus.ACTIVE),
                 new Writer(null, "Test2", "Writer2", null, WriterStatus.ACTIVE));

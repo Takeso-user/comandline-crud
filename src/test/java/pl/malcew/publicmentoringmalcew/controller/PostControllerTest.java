@@ -41,7 +41,7 @@ class PostControllerTest {
     }
 
     @Test
-    void createPostSuccessfully() {
+    void createPostSuccessfullyTest() {
         Writer writer = new Writer(
                 null,
                 "Test ",
@@ -81,7 +81,7 @@ class PostControllerTest {
     }
 
     @Test
-    void readPostSuccessfully() {
+    void readPostSuccessfullyTest() {
         when(postView.providePostId()).thenReturn(1L);
         when(postService.readPost(1L)).thenReturn(new Post(
                 1L,
@@ -100,7 +100,7 @@ class PostControllerTest {
     }
 
     @Test
-    void updatePostSuccessfully() {
+    void updatePostSuccessfullyTest() {
         Post post = new Post(
                 1L,
                 "Test Post",
@@ -124,7 +124,7 @@ class PostControllerTest {
     }
 
     @Test
-    void deletePostSuccessfully() {
+    void deletePostSuccessfullyTest() {
         when(postView.providePostId()).thenReturn(1L);
         when(postService.deletePost(anyLong())).thenReturn(1L);
 
@@ -135,7 +135,7 @@ class PostControllerTest {
     }
 
     @Test
-    void viewAllPostsSuccessfully() {
+    void viewAllPostsSuccessfullyTest() {
         List<Post> posts = Arrays.asList(
                 new Post(
                         1L,

@@ -27,12 +27,12 @@ class PostServiceTest {
     private PostService postService;
 
     @BeforeEach
-    void setUp() {
+    void setUpTest() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void createPostSuccessfully() {
+    void createPostSuccessfullyTest() {
         Post post = new Post(
                 1L,
                 "Test Post",
@@ -51,7 +51,7 @@ class PostServiceTest {
     }
 
     @Test
-    void readPostSuccessfully() {
+    void readPostSuccessfullyTest() {
         Post post = new Post(
                 1L,
                 "Test Post",
@@ -70,7 +70,7 @@ class PostServiceTest {
     }
 
     @Test
-    void updatePostSuccessfully() {
+    void updatePostSuccessfullyTest() {
         Post post = new Post(
                 1L,
                 "Test Post",
@@ -89,7 +89,7 @@ class PostServiceTest {
     }
 
     @Test
-    void deletePostSuccessfully() {
+    void deletePostSuccessfullyTest() {
         Post post = new Post(
                 1L,
                 "Test Post",
@@ -110,7 +110,7 @@ class PostServiceTest {
 
 
     @Test
-    void viewAllPostsSuccessfully() {
+    void viewAllPostsSuccessfullyTest() {
         List<Post> posts = Arrays.asList(
                 new Post(
                         3L,

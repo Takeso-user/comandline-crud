@@ -23,12 +23,12 @@ class LabelServiceTest {
     private LabelService labelService;
 
     @BeforeEach
-    void setUp() {
+    void setUpTest() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void createLabelSuccessfully() {
+    void createLabelSuccessfullyTest() {
         when(labelRepo.create(any(Label.class))).thenReturn(1L);
 
         Long id = labelService.createLabel("Test Label");
@@ -38,7 +38,7 @@ class LabelServiceTest {
     }
 
     @Test
-    void readLabelSuccessfully() {
+    void readLabelSuccessfullyTest() {
         Label label = new Label(1L, "Test Label", null);
         when(labelRepo.read(1L)).thenReturn(label);
 
@@ -49,7 +49,7 @@ class LabelServiceTest {
     }
 
     @Test
-    void updateLabelSuccessfully() {
+    void updateLabelSuccessfullyTest() {
         Label label = new Label(1L, "Test Label",null);
         when(labelRepo.update(label)).thenReturn(label);
 
@@ -60,7 +60,7 @@ class LabelServiceTest {
     }
 
     @Test
-    void deleteLabelSuccessfully() {
+    void deleteLabelSuccessfullyTest() {
         Label label = new Label(1L, "Test Label", null);
         when(labelRepo.read(1L)).thenReturn(label);
         when(labelRepo.delete(label)).thenReturn(1L);
@@ -72,7 +72,7 @@ class LabelServiceTest {
     }
 
     @Test
-    void deleteLabelUnsuccessfully() {
+    void deleteLabelUnsuccessfullyTest() {
         Label label = new Label(1L, "Test Label", null);
         when(labelRepo.read(1L)).thenReturn(label);
         when(labelRepo.delete(label)).thenThrow(new RuntimeException());
@@ -84,7 +84,7 @@ class LabelServiceTest {
     }
 
     @Test
-    void viewAllLabelsSuccessfully() {
+    void viewAllLabelsSuccessfullyTest() {
         List<Label> labels = Arrays.asList(
                 new Label(1L, "Test Label 1",null),
                 new Label(2L, "Test Label 2",null));

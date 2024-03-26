@@ -32,7 +32,7 @@ class LabelControllerTest {
     }
 
     @Test
-    void createLabelSuccessfully() {
+    void createLabelSuccessfullyTest() {
         when(labelView.provideLabelName()).thenReturn("Test Label");
         when(labelService.createLabel(anyString())).thenReturn(1L);
 
@@ -43,7 +43,7 @@ class LabelControllerTest {
     }
 
     @Test
-    void readLabelSuccessfully() {
+    void readLabelSuccessfullyTest() {
         Label label = new Label(1L, "Test Label", LabelStatus.ACTIVE);
         when(labelView.provideLabelId()).thenReturn(1L);
         when(labelService.readLabel(anyLong())).thenReturn(label);
@@ -55,7 +55,7 @@ class LabelControllerTest {
     }
 
     @Test
-    void updateLabelSuccessfully() {
+    void updateLabelSuccessfullyTest() {
         Label label = new Label(1L, "Test Label", LabelStatus.ACTIVE);
         when(labelView.provideLabelId()).thenReturn(1L);
         when(labelView.provideLabelName()).thenReturn("Test Label");
@@ -69,7 +69,7 @@ class LabelControllerTest {
     }
 
     @Test
-    void deleteLabelSuccessfully() {
+    void deleteLabelSuccessfullyTest() {
         when(labelView.provideLabelId()).thenReturn(1L);
         when(labelService.deleteLabel(anyLong())).thenReturn(1L);
 
@@ -80,7 +80,7 @@ class LabelControllerTest {
     }
 
     @Test
-    void viewAllLabelsSuccessfully() {
+    void viewAllLabelsSuccessfullyTest() {
         List<Label> labels = Arrays.asList(
                 new Label(1L, "Test Label 1", LabelStatus.ACTIVE),
                 new Label(2L, "Test Label 2", LabelStatus.ACTIVE));

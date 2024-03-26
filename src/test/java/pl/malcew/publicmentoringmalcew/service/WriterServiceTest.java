@@ -24,12 +24,12 @@ class WriterServiceTest {
     private WriterService writerService;
 
     @BeforeEach
-    void setUp() {
+    void setUpTest() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void createWriterSuccessfully() {
+    void createWriterSuccessfullyTest() {
         Writer writer = new Writer(
                 null,
                 "Test ",
@@ -46,7 +46,7 @@ class WriterServiceTest {
     }
 
     @Test
-    void readWriterSuccessfully() {
+    void readWriterSuccessfullyTest() {
         Writer writer = new Writer(
                 null,
                 "Test",
@@ -63,7 +63,7 @@ class WriterServiceTest {
     }
 
     @Test
-    void updateWriterSuccessfully() {
+    void updateWriterSuccessfullyTest() {
         Writer writer = new Writer(
                 null,
                 "Test",
@@ -80,7 +80,7 @@ class WriterServiceTest {
     }
 
     @Test
-    void deleteWriterSuccessfully() {
+    void deleteWriterSuccessfullyTest() {
         Writer writer = new Writer(
                 null,
                 "Test",
@@ -98,7 +98,7 @@ class WriterServiceTest {
     }
 
     @Test
-    void deleteWriterUnsuccessfully() {
+    void deleteWriterUnsuccessfullyTest() {
         Writer writer = new Writer(
                 null,
                 "Test",
@@ -116,7 +116,7 @@ class WriterServiceTest {
     }
 
     @Test
-    void viewAllWritersSuccessfully() {
+    void viewAllWritersSuccessfullyTest() {
         List<Writer> writers = Arrays.asList(
                 new Writer(
                         null,

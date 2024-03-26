@@ -47,9 +47,10 @@ public class PostRepoImpl extends RepoImplConnectionAbstractClass implements Pos
             if (generatedKeys.next()) {
                 return generatedKeys.getLong(1);
             } else {
-                throw new SQLException("Creating post failed, no ID obtained.");
+                LOGGER.error("Creating post failed, no ID obtained.");
             }
         }
+        return null;
     }
 
     boolean isWriterActive(Long writerId) throws SQLException {
