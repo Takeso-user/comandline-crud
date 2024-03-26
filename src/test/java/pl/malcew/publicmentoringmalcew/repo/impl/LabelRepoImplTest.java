@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import pl.malcew.publicmentoringmalcew.model.Label;
+import pl.malcew.publicmentoringmalcew.model.LabelStatus;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -66,12 +67,13 @@ public class LabelRepoImplTest {
 
     @Test
     void readLabelSuccessfully_returnsLabel() throws Exception {
-        Label label = new Label(1L, "Test Label", null);
+        Label label = new Label(1L, "Test Label", LabelStatus.ACTIVE);
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(true);
         when(resultSet.getLong("id")).thenReturn(label.id());
         when(resultSet.getString("name")).thenReturn(label.name());
+        when(resultSet.getLong("status_id")).thenReturn(label.status().getIdByName());
 
         Label result = labelRepoImpl.read(1L);
 
